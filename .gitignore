@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Local caches and disposable reruns. Published named result directories are
+# intentionally not ignored.
+results/api_cache/
+results/latest/
+
+*.zip

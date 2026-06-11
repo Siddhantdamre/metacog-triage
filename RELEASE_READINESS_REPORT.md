@@ -1,25 +1,44 @@
-# Release Readiness Report — updated 2026-06-11
+# Release Readiness Report
 
-**Current status: MetaCog-Triage v2 executed on Kaggle T4; paper-grade preliminary results available; record-level local verification pending.** Not yet: final paper-ready verified result. GitHub release unblocks when `results/v2_run1/` is copied locally and record-level verification passes.
+**Updated:** 2026-06-11
 
----
-*(Original 2026-06-10 assessment below; v2 rows now superseded by the status line above.)*
+**Current status:** MetaCog-Triage is public at
+`https://github.com/Siddhantdamre/metacog-triage`. The canonical release
+repository contains the frozen v1 set, validated 200-task v2 set, four-model v1
+and v2 records, regenerated baselines, machine-recomputed calibration results,
+and the paper draft.
 
-| Area | Level | What's left |
+## Readiness
+
+| Area | Level | Current evidence / remaining work |
 |---|---|---|
-| Data (v1 frozen tasks) | **mostly ready** | one `prepare_release.py` run to copy into package |
-| Data (v2 tasks) | **needs work** | generate (1 cmd) + your gold-label review of controls |
-| Code (harness, generator, validator, baselines) | **mostly ready** | statically reviewed, never executed — smoke-run everything once |
-| Baselines | **mostly ready** | analytic rows done; keyword baseline needs 1 run |
-| Results (v1, 4 models) | **ready** | exists, record-verified; calibration numbers need machine re-verification |
-| Results (v2) | **blocked** | needs Kaggle GPU session |
-| Calibration analysis | **mostly ready** | re-verify via `recompute_calibration.py` |
-| Paper | **needs work** | v2 results, CIs, citation verification (all of §2), LaTeX conversion |
-| Citations | **blocked on review** | every citation unverified — see `paper/CITATION_CHECKLIST.md` |
-| Reproducibility | **mostly ready** | deterministic by construction; needs one end-to-end rehearsal |
-| External-user readiness | **needs work** | one full dry run on a clean machine/Kaggle before announcing |
-| Claim discipline | **ready** | boundaries stated in README, paper, analysis files |
+| v1 data and prompt contract | **frozen** | Published artifacts are present; do not edit |
+| v2 data | **ready** | 200 tasks, 80 controls; schema, balance, and decoupling validation pass |
+| Harness and scoring | **ready** | Self-contained local runner, parser, scorer, and validators |
+| Baselines | **verified** | Committed CSVs reproduce exactly |
+| v1 results | **verified** | Four 40-task result files present |
+| v2 results | **verified** | Four 200-record result files present and locally recomputed |
+| Calibration analysis | **verified** | Record-level recomputation matches the documented headline values |
+| Paper content | **needs editorial work** | Add confidence intervals, finish citation review, record final environment, convert to LaTeX |
+| Citations | **partially ready** | Five core references verified; recent candidates and alarm-fatigue source still require reading |
+| Reproducibility | **ready with bounded caveat** | Deterministic scripts and records are present; a clean external reproduction is still valuable |
+| External release | **live** | GitHub `main` at initial public release commit |
+| Claim discipline | **ready** | Synthetic-task and non-deployment boundaries are explicit |
 
-**Overall: needs ~1 hour of your machine time + 1 Kaggle session + citation review before GitHub release. arXiv/workshop after v2 results land.**
+## Remaining Release Work
 
-Critical path (strict order): prepare_release.py → smoke-run baselines + recompute_calibration → review 10+ control labels → Kaggle v2 run → paper update → citation verification → GitHub → arXiv.
+1. Commit the post-release documentation cleanup and standalone
+   `prepare_release.py` behavior.
+2. Tag `v1.0.0` and create a GitHub Release if not already done.
+3. Add binomial confidence intervals and the final run-environment statement.
+4. Read the remaining candidate citations before adding them.
+5. Convert the paper to LaTeX after content freeze.
+6. Obtain one external run or substantive gold-label critique.
+
+## Work After v1.0
+
+- Base-versus-instruct alignment-artifact test.
+- v3 paraphrase controls and two-tier parsing.
+- Frontier API evaluation only after the v2 paper/release is stable.
+
+These are preregistered follow-ons, not published findings.

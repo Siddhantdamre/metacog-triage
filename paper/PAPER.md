@@ -128,7 +128,7 @@ These results suggest that in this triage setting, stated confidence functions a
 
 ### 5.7 v2 results: decoupled controls (200 tasks)
 
-We ran all four models on the v2 set (single greedy run, Kaggle T4, transformers 5.0.0; numbers transcribed from the run's scorer output, record-level verification pending). Overall accuracy: Qwen 0.60, SmolLM 0.71, Granite 0.67, TinyLlama 0.00 — TinyLlama produced 100% unparseable output on v2 and is excluded from cognitive interpretation as a **parser-contract failure** (format fragility, reported as such). v2 baselines: always-escalate/majority 0.40, random 0.335, surface-keyword 0.62 overall, splitting into **0.825 on standard tasks vs 0.3125 on controls** — confirming the keyword policy exploits the v1-style surface regularities and collapses when evidence flips, exactly as the control design intends.
+We ran all four models on the v2 set (single greedy run, Kaggle T4, transformers 5.0.0; all 800 records archived and locally recomputed). Overall accuracy: Qwen 0.60, SmolLM 0.71, Granite 0.67, TinyLlama 0.00. TinyLlama produced 100% unparseable output because it continued the task-document format instead of following the response contract; we report this as instruction-following collapse under the longer v2 contexts and exclude it from cognitive interpretation. v2 baselines: always-escalate/majority 0.40, random 0.335, surface-keyword 0.62 overall, splitting into **0.825 on standard tasks vs 0.3125 on controls** — confirming the keyword policy exploits the v1-style surface regularities and collapses when evidence flips, exactly as the control design intends.
 
 Raw standard-vs-control accuracy: Qwen 0.74→0.39, SmolLM 0.75→0.65, Granite 0.54→**0.86**. Granite's *higher* control accuracy is not superior evidence reading: by construction the variants differ in gold-class composition (standard: 30/60/30 ABSTAIN/ESCALATE/COMMIT; control: 20/40/20 ESCALATE/COMMIT/ABSTAIN), so raw variant gaps re-weight per-class skill. Granite's per-class profile (COMMIT 0.94, ABSTAIN 0.92, ESCALATE 0.28) explains its control advantage compositionally. **Variant comparisons must therefore be read per gold class**, which we report in the record-level analysis.
 
@@ -140,7 +140,7 @@ The per-gold-class × variant table — the confound-free measurement — yields
 
 ### 5.8 v2 confidence calibration: a usable but mislabeled signal emerges
 
-The v2 calibration recompute (machine-produced on the run host; record files pending local archival) refines the v1 calibration picture in one important way. Discrimination gaps at n=200: Qwen +0.284 (commitment-marker semantics persist, now with intermediate 0.5 values on 11 tasks — all correct), SmolLM **+0.183** (up from +0.108 at n=40), Granite +0.022 (still flat), TinyLlama unparseable (0/200). Granite remains the cleanest case of confidence-as-stylistic-token: 0.919 mean confidence, including 0.919 on the ESCALATE class it gets 27.5% right — its confident-error rate (0.16) is concentrated exactly on the class deployment most needs it to flag.
+The v2 calibration recompute, reproduced locally from the archived records, refines the v1 calibration picture in one important way. Discrimination gaps at n=200: Qwen +0.284 (commitment-marker semantics persist, now with intermediate 0.5 values on 11 tasks — all correct), SmolLM **+0.183** (up from +0.108 at n=40), Granite +0.022 (still flat), TinyLlama unparseable (0/200). Granite remains the cleanest case of confidence-as-stylistic-token: 0.919 mean confidence, including 0.919 on the ESCALATE class it gets 27.5% right — its confident-error rate (0.16) is concentrated exactly on the class deployment most needs it to flag.
 
 The SmolLM result deserves emphasis. **Every one of its 17 sub-0.8 confidence statements accompanies an error** (bucket accuracies: 0.5→0.00 across 11 tasks, 0.7→0.00 across 6), replicating and strengthening the v1 pattern (4/4). Moreover its mean confidence is graded by gold class: 0.96 on commits, 0.90 on escalations, **0.72 on gold-ABSTAIN tasks** — the genuinely uncertain class — even though its *action* on that class is 96% wrong (it escalates). The information needed for correct triage appears to be present in SmolLM's confidence channel while being absent from its action channel: a simple post-hoc rule quantifies this from the records: remapping SmolLM's sub-0.8-confidence responses to ABSTAIN affects 17 responses, **fixes all 17, and breaks none** — accuracy rises from 0.710 to 0.795 and gold-ABSTAIN accuracy from 0.000 to 0.340. Qwen shows the same dissociation under its own confidence semantics: its eleven 0.5-confidence statements are exactly its eleven correct abstentions. In both models the confidence channel outperforms the action channel on the hardest class. The over-escalation collapse is therefore not a perception failure but an **action-mapping failure**: the model detects ordinary uncertainty and cannot express the distinction in its chosen action — consistent with, and a sharper version of, the alignment-artifact hypothesis that tuning suppresses the expression of a distinction the model still internally computes.
 
@@ -154,7 +154,7 @@ The SmolLM result deserves emphasis. **Every one of its 17 sub-0.8 confidence st
 
 ## 7. Limitations
 
-This is a first result, bounded in ways we state plainly. The v1 set contains 40 tasks; per-type accuracies rest on 10 tasks each, so individual cell estimates are coarse (binomial 95% CIs of roughly ±0.3 at n=10). Four models, all 1–2B, single greedy run each: we make no claims about larger models, API models, sampled decoding, or prompt variations. The v1 type–label confound means v1 results alone cannot rule out surface pattern-matching; the v2 control variants test this directly (§5.7), though v2 numbers are currently transcribed from a single Kaggle run and await record-level local verification. Raw v2 standard-vs-control comparisons carry a gold-class composition difference by construction and must be read per gold class. Scenarios are synthetic English text derived from three simulated domains; transfer to real operational text is untested. Finally, the action taxonomy fixes one normative standard for escalation; other operational contexts may draw the abstain/escalate boundary differently.
+This is a first result, bounded in ways we state plainly. The v1 set contains 40 tasks; per-type accuracies rest on 10 tasks each, so individual cell estimates are coarse (binomial 95% CIs of roughly ±0.3 at n=10). Four models, all 1–2B, single greedy run each: we make no claims about larger models, API models, sampled decoding, or prompt variations. The v1 type–label confound means v1 results alone cannot rule out surface pattern-matching; the v2 control variants test this directly (§5.7) using one locally archived and record-verified Kaggle run. Raw v2 standard-vs-control comparisons carry a gold-class composition difference by construction and must be read per gold class. Scenarios are synthetic English text derived from three simulated domains; transfer to real operational text is untested. Finally, the action taxonomy fixes one normative standard for escalation; other operational contexts may draw the abstain/escalate boundary differently.
 
 ## 8. Conclusion
 
@@ -168,12 +168,14 @@ All evaluation is local and deterministic: fixed prompt contract, greedy decodin
 
 ## TODO before submission
 
-- [x] v2 run complete (2026-06-11, Kaggle T4). Pending: copy result JSONs into `results/v2_run1/`, run record-level calibration recompute, replace §5.7 transcribed numbers with machine-verified ones, add per-gold-class × variant table.
-- [ ] Inspect granite v2 parse errors (17%) and tinyllama v2 raw outputs (100% parse failure — what changed vs v1?).
-- [ ] Add run-environment limitations: single seed, transformers 5.0.0/torch 2.10 pinned, T4, duplicate main-run cell (deterministic; verify identical outputs).
-- [ ] Add 2–4 larger open models (3–8B) if compute allows; ideally one API model.
-- [ ] Add binomial confidence intervals to all tables.
-- [x] Core §2 citations verified against sources (2026-06-10); still to do: read + add the recent candidates in CITATION_CHECKLIST.md and find an alarm-fatigue source.
-- [ ] Run `python baselines/recompute_calibration.py` on the four result JSONs and confirm every number in Section 5.6 (computed by manual extraction; must be machine-verified).
-- [ ] Run `python baselines/baselines.py` and fill in the surface-keyword row in Section 5.5.
-- [ ] Convert to LaTeX (arXiv) after content freeze.
+- [ ] Add the final run-environment statement: single greedy run,
+  transformers 5.0.0, torch 2.10.0+cu128, Kaggle T4.
+- [ ] Add binomial confidence intervals to the result tables.
+- [ ] Read the recent candidates in `CITATION_CHECKLIST.md` before citing them.
+- [ ] Find a verified alarm-fatigue/escalation-cost source if that motivation
+  remains.
+- [ ] Perform a final claim-to-artifact audit.
+- [ ] Convert to LaTeX after content freeze.
+
+Larger models, API models, and the base-versus-instruct test are follow-on
+experiments, not blockers for reporting the bounded four-model result.

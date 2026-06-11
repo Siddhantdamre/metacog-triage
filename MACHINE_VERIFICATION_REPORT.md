@@ -1,4 +1,4 @@
-# Machine Verification Report — 2026-06-10
+# Machine Verification Report - 2026-06-10, followed up 2026-06-11
 
 Executed by Claude under delegated authority, in the session sandbox (Python 3.10.12, Linux VM over the mounted project folder).
 
@@ -29,6 +29,12 @@ The sandbox mount intermittently served a stale copy of a just-edited file (base
 
 ## Status
 
-- Package: **ready for Kaggle**. Remaining human steps: (1) optional but recommended — author skims controls personally; (2) run `kaggle_run_v2.ipynb`; (3) run root-level `push_everything.bat` (or let the committed state stand if git commit from sandbox succeeded — see coordinator notes).
-- Paper: ready except v2 results + the two recent-work citations to read.
-- No v2 model results exist yet; nothing about model behavior on v2 is claimed anywhere.
+- The Kaggle v2 run is complete.
+- All four 200-record result files are archived under `results/v2_run1/`.
+- Local record-level calibration recomputation reproduces the documented
+  qwen, smollm, granite, and tinyllama values.
+- v1 and v2 baseline CSVs regenerate exactly.
+- The GitHub repository is live.
+- Remaining work is editorial: stale paper/checklist wording, confidence
+  intervals, remaining citation reading, LaTeX conversion, and external
+  replication.

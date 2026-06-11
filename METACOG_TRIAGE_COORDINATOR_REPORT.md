@@ -1,57 +1,69 @@
-# MetaCog-Triage Coordinator Report — 2026-06-10
+# MetaCog-Triage Coordinator Report
 
-## Session constraint
-The sandbox shell failed to start, so **no code was executed**. Everything below is either (a) file-verified, (b) computed by direct record-level extraction from result JSONs, or (c) prepared-but-unexecuted code. Nothing is claimed as tested.
+**Updated:** 2026-06-11
 
-## 1. Verified locally
-Frozen v1 task set + harness; 4-model v1 result JSONs (all 160 records read individually); N-series, R.1–R.3, DEIC core, CogBench, Kaggle bundle. **R.4 / P.1 / P.3 / Q.1 / D.1 / W.1: not found locally — marked unverified** (see `../PROJECT_LOCAL_VERIFICATION.md`).
+## Canonical State
 
-## 2. Generated this session
-Release package (`src/`, `tasks/`, `baselines/`, `prepare_release.py`, README/LICENSE/CITATION), v2 generator (200 tasks, gold/type decoupled, 80 controls), validator, baselines script, calibration recompute script, paper §5.5 + §5.6, audit + readiness + external-review + verification docs.
+The canonical project is this standalone repository, not the parent
+Emotion_and_AI tree and not `metacog_triage_public/`.
 
-## 3. Analyses completed (manual extraction, pending machine verification)
-Full confidence-calibration analysis, 4 models. Key numbers: discrimination gap (conf-correct − conf-wrong): qwen +0.264 (action-conditioned), smollm +0.108, granite +0.012, tinyllama 0.000. Calibration gap: qwen −0.534, smollm +0.141, granite +0.290, tinyllama +0.532. See `analysis/confidence_calibration_analysis.md`.
+- Remote: `https://github.com/Siddhantdamre/metacog-triage`
+- Published branch: `main`
+- Initial public commit: `5fc6e86`
+- Frozen v1 tasks: 40
+- Validated v2 tasks: 200, including 80 controls
+- Model records: four v1 files and four v2 files
 
-## 4. Baseline results (analytic, exact)
-always-escalate 0.500, always-abstain/commit 0.250, random 0.333. Granite (0.525) ≈ majority baseline; tinyllama (0.175) < random; qwen/smollm beat trivial only via clear-commit class. Keyword baseline needs one run.
+## Verification Completed
 
-## 5. Calibration headline
-**In 3 of 4 models, stated confidence carries essentially no information about correctness; high-confidence errors (conf > 0.7, wrong) occur on 25–33% of all tasks for those models, and are invisible to the v1 silent-failure metric because they occur on ABSTAIN/ESCALATE responses.** Qwen uses divergent confidence semantics (0.0 unless committing). No model shows graded uncertainty recognition.
+- v1 and v2 schema validation
+- v2 balance and type-to-gold decoupling checks
+- v1 and v2 trivial/surface baseline regeneration
+- four-model v1 calibration recomputation
+- four-model v2 record-level calibration recomputation
+- 12-control manual review sample
+- exact reproduction of committed baseline CSVs
 
-## 6. v2 task set
-Designed + generator written; NOT yet generated/validated/label-reviewed. 200 tasks, 70C/50A/80E, controls break type→gold correlation.
+## Headline v2 Results
 
-## 7. Model results
-v1: complete (4 models). v2: blocked on GPU session.
+| Model | Accuracy | Primary observed failure mode |
+|---|---:|---|
+| Qwen2.5-1.5B-Instruct | 0.600 | Resolved-conflict vocabulary vetoes correct commits |
+| SmolLM2-1.7B-Instruct | 0.710 | Zero abstentions; confidence exposes a repairable action-mapping gap |
+| Granite-3.1-2B-Instruct | 0.670 | Strong commit/abstain discrimination but weak escalation |
+| TinyLlama-1.1B-Chat | 0.000 | Document-continuation/instruction-following collapse on v2 |
 
-## 8. Paper status
-Draft with results through §5.6; needs v2 results, CIs, citation verification (100% of §2 unverified), LaTeX.
+The surface-keyword baseline scores `0.620` overall on v2, with `0.825` on
+standard cases and `0.3125` on controls. The class-by-variant matrix, rather
+than the raw standard/control aggregate gap, is the primary evidence-sensitive
+comparison.
 
-## 9. Release readiness
-See `RELEASE_READINESS_REPORT.md`. Short version: ~1 hr local + 1 Kaggle session + citation review from GitHub-ready.
+## Strongest Bounded Finding
 
-## 10. Remaining blockers
-No shell this session (everything unexecuted); GPU for v2; your gold-label review; citation verification.
+Small open models can avoid bluffing while still failing to distinguish
+ordinary uncertainty from structural failure. The models exhibit different
+mechanisms rather than one generic low-capability pattern.
 
-## 11. Exact next commands (your machine, in order)
-```bash
-cd metacog_triage_release
-python prepare_release.py
-python baselines/baselines.py --tasks tasks/metacog_tasks_v1.jsonl --output analysis/baseline_results_v1.csv
-python baselines/recompute_calibration.py ../results/frontier_local/open_model_expansion/full_40_single/qwen_results.json ../results/frontier_local/open_model_expansion/full_40_single/smollm_results.json ../results/frontier_local/open_model_expansion/full_40_single/granite_results.json ../results/frontier_local/open_model_expansion/full_40_single/tinyllama_results.json
-# then read 10+ control tasks in tasks/metacog_tasks_v2.jsonl
-# then Kaggle: python src/run_benchmark.py --models qwen smollm granite tinyllama --tasks tasks/metacog_tasks_v2.jsonl --output results/v2_run1/
-```
-Also: `git status` in the repo root — R-series/N-series files may be untracked; commit them.
+For SmolLM, remapping its 17 sub-0.8 confidence responses to ABSTAIN fixes
+17 errors and breaks 0 correct responses. This supports an action-channel
+dissociation in this run. It does not yet prove the broader alignment-artifact
+hypothesis.
 
-## 12. Honest limitations
-n=40, single greedy runs, 1–2B models only, synthetic scenarios, verbalized (not logit) confidence, v1 type–gold confound unresolved until v2 runs, all session arithmetic pending machine verification.
+## Current Uncommitted Work
 
-## 13. GitHub-ready?
-**Mostly** — after the 4 commands above + label review. Not before.
+- `kaggle_run_v2.ipynb`: base-versus-instruct hypothesis-run cell
+- `ANNOUNCEMENTS.md`: outreach copy
+- documentation and standalone-preparation cleanup
 
-## 14. arXiv/workshop-ready?
-**Not yet** — needs v2 results + verified citations. Realistic: days, not months.
+## Remaining Human Decisions
 
-## 15. Requires your manual review
-v2 control gold labels (you are the label authority); citation verification; the outreach message recipients; final read of paper claims against your own standards.
+1. Final paper claim review.
+2. Remaining citation reading.
+3. Whether to tag `v1.0.0` now or after the documentation cleanup.
+4. Outreach recipients and external-review venue.
+
+## Claim Boundaries
+
+The benchmark covers synthetic, text-described tasks and four small open
+models under single greedy runs. It does not establish deployment safety,
+general model metacognition, AGI, consciousness, or real-world transfer.

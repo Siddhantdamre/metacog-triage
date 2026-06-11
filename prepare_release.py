@@ -1,14 +1,15 @@
 """One-shot preparation script for the MetaCog-Triage release package.
 
 Copies the frozen v1 task set and existing result files from the
-Emotion_and_AI repo into this package, then validates everything.
+Emotion_and_AI repo when available, then validates the packaged artifacts.
 
 Run from the package root:
 
     python prepare_release.py
 
-It assumes the package lives inside the Emotion_and_AI repo. If you have
-moved it, pass the repo root explicitly:
+The public repository is self-contained. When the parent repo is unavailable,
+the script keeps the packaged frozen artifacts and continues validation.
+To refresh from a parent checkout, pass its root explicitly:
 
     python prepare_release.py --repo-root /path/to/Emotion_and_AI
 """
@@ -40,6 +41,9 @@ def copy_one(repo_root: Path, src_rel: str, dst_rel: str) -> bool:
     src = repo_root / src_rel
     dst = PACKAGE_ROOT / dst_rel
     if not src.exists():
+        if dst.exists():
+            print(f"  using packaged artifact: {dst_rel}")
+            return True
         print(f"  MISSING (skipped): {src_rel}")
         return False
     dst.parent.mkdir(parents=True, exist_ok=True)

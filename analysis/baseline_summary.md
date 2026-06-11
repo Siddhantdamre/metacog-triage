@@ -1,36 +1,47 @@
-# Baseline Summary — MetaCog-Triage v1
+# Baseline Summary - MetaCog-Triage
 
-Trivial-policy baselines on the frozen 40-task v1 set (gold distribution: 10 COMMIT / 10 ABSTAIN / 20 ESCALATE). All values except the keyword baseline are exact analytic results, not simulations.
+All values below were regenerated from the released task files. The committed
+CSV files are:
 
-| Policy | Accuracy | Notes |
+- `analysis/baseline_results_v1.csv`
+- `analysis/baseline_results_v2.csv`
+
+## v1: 40 Tasks
+
+Gold distribution: 10 COMMIT, 10 ABSTAIN, 20 ESCALATE.
+
+| Policy | Accuracy | Important behavior |
 |---|---:|---|
-| Always-ESCALATE (= majority class) | **0.500** | zero bluffing, zero silent failure — "looks safe" |
-| Always-ABSTAIN | 0.250 | |
-| Always-COMMIT | 0.250 | bluff rate 0.75 |
-| Random uniform | 0.333 | expectation |
-| Surface-keyword | *needs one run* | `python baselines/baselines.py --tasks tasks/metacog_tasks_v1.jsonl --output analysis/baseline_results_v1.csv` |
+| Always-ESCALATE / majority | `0.5000` | Zero bluffing, but over-escalates all ABSTAIN cases |
+| Always-ABSTAIN | `0.2500` | Misses every structural failure |
+| Always-COMMIT | `0.2500` | Bluff rate `0.7500` |
+| Random uniform | `0.3326` | Mean over 1,000 seeded trials |
+| Surface-keyword | `0.6500` | Strong evidence that v1 contains exploitable surface regularities |
 
-## What the baselines reveal about the models
+The v1 surface baseline beats Granite (`0.525`) and comes within `0.075` of
+Qwen (`0.725`). Therefore v1 scores alone do not establish evidence-state
+reading.
 
-| Model | Accuracy | vs always-escalate (0.50) |
-|---|---:|---|
-| SmolLM2-1.7B | 0.750 | +0.25 — entire margin comes from the 10 clear-commit tasks; on the other 30 tasks its policy is *behaviorally identical* to always-escalate |
-| Qwen2.5-1.5B | 0.725 | +0.225 — same structure (8/10 commits + escalate-everything-else) |
-| Granite-3.1-2B | 0.525 | **+0.025 — statistically indistinguishable from the trivial majority baseline** |
-| TinyLlama-1.1B | 0.175 | below random (0.333) |
+## v2: 200 Tasks
 
-Honest reading: the two "best" models implement *commit-on-obvious, escalate-everything-else* — a two-action policy that a 10-line heuristic could match. Granite adds genuine ABSTAIN usage but deploys it indiscriminately, landing at the majority baseline. No model demonstrably reads evidence states beyond what surface heuristics achieve. **The decisive test is the keyword baseline on v2 control variants**, where surface policies collapse to ~0 on controls by construction; if models hold up on controls and keywords don't, that gap is the first real evidence of evidence-sensitivity.
+Gold distribution: 70 COMMIT, 50 ABSTAIN, 80 ESCALATE. Variant distribution:
+120 standard, 80 control.
 
-## Expected v2 baseline behavior (predictions, to verify after the v2 run)
+| Policy | Overall | Standard | Control |
+|---|---:|---:|---:|
+| Always-ESCALATE / majority | `0.4000` | `0.5000` | `0.2500` |
+| Always-ABSTAIN | `0.2500` | `0.2500` | `0.2500` |
+| Always-COMMIT | `0.3500` | `0.2500` | `0.5000` |
+| Random uniform | `0.3348` | `0.3343` | `0.3357` |
+| Surface-keyword | `0.6200` | `0.8250` | `0.3125` |
 
-v2 gold distribution: 70 COMMIT / 50 ABSTAIN / 80 ESCALATE (200 tasks).
+The surface-keyword standard-to-control drop is `0.5125`. This confirms that
+the controls break the shallow vocabulary policy. Model variant results must
+still be interpreted within gold class because standard and control variants
+have different class mixtures.
 
-| Policy | Expected overall | Expected on controls |
-|---|---:|---:|
-| Always-ESCALATE | 0.400 | 0.125 (only the 20 hu-controls) |
-| Always-COMMIT | 0.350 | 0.500 (40 of 80 controls) |
-| Always-ABSTAIN | 0.250 | 0.250 |
-| Random | 0.333 | 0.333 |
-| Type-keyword policy (v1-optimal) | ≤0.600 | **0.000 by construction** |
+## Interpretation Rule
 
-Pre-registering these predictions here so the v2 results can be compared against expectations stated *before* the run.
+Use the per-gold-class by variant table as the primary comparison. Aggregate
+standard-versus-control gaps can be caused by class reweighting and should not
+be presented as a standalone evidence-sensitivity score.

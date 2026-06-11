@@ -1,45 +1,48 @@
 # Release Checklist
 
-Work top to bottom. Each step is small; stop at any point and the package is still coherent.
+## Completed
 
-## 1. Prepare locally (10 minutes)
+- [x] Package is self-contained.
+- [x] Frozen v1 tasks and results are included.
+- [x] v2 generated and validated: 200 tasks, 80 controls.
+- [x] Baselines regenerated for v1 and v2.
+- [x] Four-model v2 run completed on Kaggle T4.
+- [x] Result JSONs copied into `results/v2_run1/`.
+- [x] Record-level calibration recomputed.
+- [x] Per-gold-class by variant analysis produced.
+- [x] Granite truncation and TinyLlama continuation failures inspected.
+- [x] GitHub repository created and initial release pushed.
+- [x] Core Section 2 references checked for existence and abstract-level fit.
 
-- [ ] `cd metacog_triage_release`
-- [ ] `pip install -r requirements.txt` (only needed for model runs; prepare/validate need nothing)
-- [ ] `python prepare_release.py`
-      — copies the frozen v1 tasks + published results from the parent repo, generates the 200-task v2 set, validates both. All steps must print OK.
-- [ ] Open `tasks/metacog_tasks_v2.jsonl` and read ~10 tasks, especially control variants. You are the gold-label author: confirm every control's gold action follows from its evidence state. Edit `generate_tasks_v2.py` and regenerate if any feel wrong — *before* any model sees them.
+## Before Tagging v1.0.0
 
-## 2. Run v2 (one Kaggle session)
+- [ ] Commit the post-release documentation cleanup.
+- [ ] Confirm README quickstart from a clean standalone checkout.
+- [ ] Decide whether `ANNOUNCEMENTS.md` belongs in the release.
+- [ ] Confirm the GitHub repository contains all four v2 result JSONs.
+- [ ] Create and push the `v1.0.0` tag.
 
-- [ ] Upload the package folder to a Kaggle notebook (GPU: T4 is enough).
-- [ ] `python src/run_benchmark.py --models qwen smollm granite tinyllama --tasks tasks/metacog_tasks_v2.jsonl --output results/v2_run1/`
-- [ ] Check `results/v2_run1/comparison_table.md` — the **By Variant** section is the key new table: standard vs control accuracy gap measures surface pattern-matching.
-- [ ] Optional: add `qwen3b` and `phi` to the run for a scale probe.
+## Before arXiv or Workshop Submission
 
-## 3. Update paper
+- [x] Remove completed items from the paper TODO section.
+- [ ] Add binomial confidence intervals.
+- [ ] Record the final hardware/library environment.
+- [ ] Read the remaining candidate citations before adding them.
+- [ ] Find and verify an alarm-fatigue/escalation-cost source if that framing
+      remains in the paper.
+- [ ] Convert `paper/PAPER.md` to LaTeX.
+- [ ] Perform a final claim-to-artifact audit.
 
-- [ ] Add v2 results to `paper/PAPER.md` (Section 5; the by-variant table directly tests the Section 5.4 hypothesis).
-- [ ] Add a random-policy baseline row (expected accuracy = gold-class frequency of most common action).
-- [ ] Verify EVERY citation in Section 2 — they are from memory and must be checked against the actual papers before anything goes public.
-- [ ] Delete the TODO section once done.
+## External Validation
 
-## 4. Publish the benchmark
+- [ ] Ask for criticism of the gold-action rules.
+- [ ] Record external runs in an external-run log.
+- [ ] Treat label disagreement as high-value evidence.
+- [ ] Version any task-label change as a new release; never rewrite frozen v1.
 
-- [ ] Create a fresh GitHub repo (suggested name: `metacog-triage`). Copy this folder's contents (not the parent repo).
-- [ ] Confirm `LICENSE`, `CITATION.cff`, `README.md` render correctly on GitHub.
-- [ ] Tag `v1.0.0`.
-- [ ] Optional: upload task sets to Hugging Face Datasets with a dataset card pointing to the repo.
+## Honesty Rails
 
-## 5. Get outside contact (the actual point)
-
-- [ ] Post the repo + headline finding where benchmark people will see it (e.g., an alignment/evals forum, X, the Kaggle discussion of your original submission).
-- [ ] Convert `PAPER.md` to LaTeX and submit to arXiv (cs.CL or cs.AI).
-- [ ] Pick one workshop with an open deadline (agent evaluation / safety / trustworthy NLP at NeurIPS, ICLR, ACL venues) and submit. A rejection with reviews is a *success* at this stage — reviews are the external signal the project has never had.
-- [ ] Invite critique of the gold-action rules specifically; if someone breaks a control variant, fix and re-release as v2.1. That exchange is the benchmark becoming real.
-
-## Honesty rails (keep these)
-
-- Never edit `tasks/metacog_tasks_v1.jsonl` or `src/prompt_builder.py` — published v1 numbers depend on them.
-- Report v2 control-variant results even if (especially if) they make the models — or the benchmark — look worse.
-- The paper claims nothing about models that were not run. Keep it that way.
+- Never edit `tasks/metacog_tasks_v1.jsonl` or `src/prompt_builder.py`.
+- Report control results and parse/instruction failures even when unfavorable.
+- Do not generalize beyond the evaluated models and synthetic task contract.
+- Keep preregistered follow-on hypotheses separate from published findings.

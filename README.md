@@ -19,6 +19,22 @@ Small open instruction-tuned models can look "safe" — zero bluffing, zero sile
 
 Distinct failure modes, not one generic incompetence — which is what makes the benchmark informative beyond a single score.
 
+## Verified v2 result (200 tasks)
+
+v2 decouples task type from gold action with 80 control variants. The released
+records produce:
+
+| Model | Final Acc | Main observed pattern |
+|---|---:|---|
+| Qwen2.5-1.5B-Instruct | 0.60 | Correct standard commits, but 0/40 control commits |
+| SmolLM2-1.7B-Instruct | 0.71 | Zero abstentions despite a repairable confidence signal |
+| Granite-3.1-2B-Instruct | 0.67 | Strong commit/abstain handling, weak escalation |
+| TinyLlama-1.1B-Chat | 0.00 | Instruction-following/document-continuation collapse |
+
+The surface-keyword baseline drops from `0.825` on standard cases to `0.3125`
+on controls. See `analysis/v2_record_level_findings.md` for the
+class-by-variant analysis and bounded interpretation.
+
 ## Action taxonomy
 
 Each task presents a hidden-state diagnostic scenario (evidence summary, signals, one distractor). The model must output JSON choosing exactly one action:
@@ -49,7 +65,9 @@ Scenarios are derived from three deterministic partially-observable environments
 ```bash
 pip install -r requirements.txt
 
-# 1. Pull frozen v1 artifacts from the parent repo, generate + validate v2
+# 1. Validate packaged v1 artifacts and regenerate + validate v2.
+# If a parent Emotion_and_AI checkout is present, frozen v1 artifacts are
+# refreshed from it; otherwise the packaged copies are used.
 python prepare_release.py
 
 # 2. Run models (GPU recommended; Kaggle T4 free tier works)
@@ -58,6 +76,8 @@ python src/run_benchmark.py --models qwen smollm granite tinyllama \
 ```
 
 Decoding is greedy, so a single run is deterministic for a fixed model and `transformers` version.
+
+Published v2 result JSONs are already included under `results/v2_run1/`.
 
 ## Repository layout
 
