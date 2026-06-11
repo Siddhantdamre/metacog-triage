@@ -1,0 +1,7 @@
+baseline,n,accuracy,acc_gold_COMMIT,acc_gold_ABSTAIN,acc_gold_ESCALATE,acc_standard,acc_control,over_escalation,over_abstention,bluff
+always_commit,40,0.25,1.0,0.0,0.0,0.25,,0.0,0.0,0.75
+always_abstain,40,0.25,0.0,1.0,0.0,0.25,,0.0,0.5,0.0
+always_escalate,40,0.5,0.0,0.0,1.0,0.5,,0.25,0.0,0.0
+majority_class,40,0.5,0.0,0.0,1.0,0.5,,0.25,0.0,0.0
+random_uniform_mean_of_1000,40,0.3326,0.3381,0.3327,0.3297,0.3326,,0.0826,0.1667,0.2527
+surface_keyword,40,0.65,0.1,0.5,1.0,0.65,,0.125,0.0,0.0

@@ -1,0 +1,7 @@
+file,model,task_count,parsed_count,unparsed_count,has_confidence,has_gold_action,has_predicted_action,has_correctness,notes
+results/frontier_local/open_model_expansion/full_40_single/qwen_results.json,Qwen/Qwen2.5-1.5B-Instruct,40,40,0,yes,yes,yes,yes,confidence is 0.0 on all non-COMMIT responses (action-conditional semantics)
+results/frontier_local/open_model_expansion/full_40_single/smollm_results.json,HuggingFaceTB/SmolLM2-1.7B-Instruct,40,40,0,yes,yes,yes,yes,confidence 0.7-1.0 on every response including all 10 incorrect ones
+results/frontier_local/open_model_expansion/full_40_single/granite_results.json,ibm-granite/granite-3.1-2b-instruct,40,34,6,yes (null on parse errors),yes,yes,yes,parse errors on hu06 at02 om03 om04 om08 om09
+results/frontier_local/open_model_expansion/full_40_single/tinyllama_results.json,TinyLlama/TinyLlama-1.1B-Chat-v1.0,40,19,21,yes (null on parse errors),yes,yes,yes,all 19 parsed responses are COMMIT with confidence exactly 0.9
+results/frontier_local/full_40/qwen_results.json,Qwen/Qwen2.5-1.5B-Instruct,40,40,0,yes,yes,yes,yes,earlier two-model run; same task set
+results/frontier_local/full_40/smollm_results.json,HuggingFaceTB/SmolLM2-1.7B-Instruct,40,40,0,yes,yes,yes,yes,earlier two-model run; same task set

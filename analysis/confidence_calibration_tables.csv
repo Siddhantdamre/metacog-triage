@@ -1,0 +1,18 @@
+model,n_total,n_parsed,n_parse_errors,accuracy_all,accuracy_parsed,mean_conf_parsed,mean_conf_correct,mean_conf_incorrect_parsed,discrimination_gap,calibration_gap_parsed,ece_parsed,brier_parsed
+qwen,40,40,0,0.725,0.725,0.1913,0.2638,0.0000,0.2638,-0.5337,0.5338,0.5262
+smollm,40,40,0,0.750,0.750,0.8912,0.9183,0.8100,0.1083,0.1412,0.1412,0.1723
+granite,40,34,6,0.525,0.6176,0.9074,0.9119,0.9000,0.0119,0.2897,0.2897,0.3182
+tinyllama,40,19,21,0.175,0.3684,0.9000,0.9000,0.9000,0.0000,0.5316,0.5316,0.5153
+
+# Definitions
+# accuracy_all: correct / all 40 tasks (parse errors count as incorrect)
+# accuracy_parsed: correct / parsed responses only
+# mean_conf_parsed: mean stated confidence over parsed responses
+# discrimination_gap: mean_conf_correct - mean_conf_incorrect (parsed); ~0 means confidence carries no information about correctness
+# calibration_gap_parsed: mean_conf_parsed - accuracy_parsed; positive = overconfident
+# ece_parsed: expected calibration error over buckets [0,.2),[.2,.4),[.4,.6),[.6,.8),[.8,1.0], parsed responses, confidence read as P(correct)
+# brier_parsed: mean (confidence - correct)^2 over parsed responses, confidence read as P(correct)
+# NOTE qwen caveat: qwen outputs confidence 0.0 on every non-COMMIT response, i.e. it uses confidence to mean
+# "confidence in a committed conclusion", not P(chosen action is correct). Its negative calibration gap and high
+# ECE/Brier reflect this semantic divergence, not random noise. See analysis md, section "Confidence semantics".
+# MACHINE-VERIFIED 2026-06-10 by baselines/recompute_calibration.py

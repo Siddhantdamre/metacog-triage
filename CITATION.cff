@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this benchmark, please cite it as below."
+title: "MetaCog-Triage: A Benchmark for Commit/Abstain/Escalate Discrimination in Language Models under Partial Observability"
+authors:
+  - family-names: "Damre"
+    given-names: "Siddhant"
+    email: "siddhantdamre31@gmail.com"
+version: "1.0.0"
+date-released: "2026-06-10"
+license: MIT
+keywords:
+  - metacognition
+  - calibration
+  - selective prediction
+  - abstention
+  - language model evaluation
+  - benchmark
+abstract: >
+  MetaCog-Triage evaluates whether language models can distinguish three
+  responses to hidden-state diagnostic scenarios: committing to a conclusion,
+  abstaining under ordinary uncertainty, and escalating under contradiction,
+  trust failure, or model insufficiency. First results show small open models
+  can achieve zero bluff rates while collapsing ordinary uncertainty into
+  over-escalation, suggesting apparent safety can mask calibration failure.

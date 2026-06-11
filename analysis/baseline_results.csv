@@ -1,0 +1,10 @@
+baseline,n,accuracy,acc_gold_COMMIT,acc_gold_ABSTAIN,acc_gold_ESCALATE,over_escalation,over_abstention,bluff,method
+always_commit,40,0.2500,1.0000,0.0000,0.0000,0.0000,0.0000,0.7500,analytic (v1 gold distribution 10C/10A/20E)
+always_abstain,40,0.2500,0.0000,1.0000,0.0000,0.0000,0.5000,0.0000,analytic
+always_escalate,40,0.5000,0.0000,0.0000,1.0000,0.2500,0.0000,0.0000,analytic
+majority_class_escalate,40,0.5000,0.0000,0.0000,1.0000,0.2500,0.0000,0.0000,analytic (majority gold class is ESCALATE)
+random_uniform,40,0.3333,0.3333,0.3333,0.3333,0.0833,0.1667,0.1667,analytic expectation
+surface_keyword,40,,,,,,,,REQUIRES EXECUTION: python baselines/baselines.py --tasks tasks/metacog_tasks_v1.jsonl --output analysis/baseline_results_v1.csv
+
+# Model scores for comparison (same 40 tasks, parse errors = incorrect):
+# qwen 0.725 / smollm 0.750 / granite 0.525 / tinyllama 0.175

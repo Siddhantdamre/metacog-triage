@@ -1,0 +1,28 @@
+model,view,action,n,accuracy,mean_confidence,notes
+qwen,by_predicted,COMMIT,8,1.0000,0.9563,all commits correct
+qwen,by_predicted,ABSTAIN,2,0.5000,0.0000,hu10 correct; cc10 wrong
+qwen,by_predicted,ESCALATE,30,0.6667,0.0000,9 wrong escalations are all gold-ABSTAIN cases
+qwen,by_gold,COMMIT,10,0.8000,0.7650,2 missed commits (cc05 escalated; cc10 abstained) at conf 0.0
+qwen,by_gold,ABSTAIN,10,0.1000,0.0000,9 of 10 escalated
+qwen,by_gold,ESCALATE,20,1.0000,0.0000,perfect detection; confidence stated as 0.0 throughout
+smollm,by_predicted,COMMIT,10,1.0000,0.9550,
+smollm,by_predicted,ABSTAIN,0,,,never abstains
+smollm,by_predicted,ESCALATE,30,0.6667,0.8700,10 wrong escalations stated at mean conf 0.81
+smollm,by_gold,COMMIT,10,1.0000,0.9550,
+smollm,by_gold,ABSTAIN,10,0.0000,0.8100,all escalated with confidence 0.7-0.9
+smollm,by_gold,ESCALATE,20,1.0000,0.9000,
+granite,by_predicted,COMMIT,10,1.0000,0.9750,
+granite,by_predicted,ABSTAIN,22,0.4091,0.8727,13 wrong abstentions (9 trust failures + 4 overflows) at conf 0.9
+granite,by_predicted,ESCALATE,2,1.0000,0.9500,om02 om10 only
+granite,by_gold,COMMIT,10,1.0000,0.9750,
+granite,by_gold,ABSTAIN,10,0.9000,0.8333,1 parse error (hu06)
+granite,by_gold,ESCALATE,20,0.1000,0.9067,parsed 15: 13 abstained at conf 0.9; 5 parse errors
+tinyllama,by_predicted,COMMIT,19,0.3684,0.9000,only action ever produced; uniform confidence 0.9
+tinyllama,by_predicted,ABSTAIN,0,,,never abstains
+tinyllama,by_predicted,ESCALATE,0,,,never escalates
+tinyllama,by_gold,COMMIT,10,0.7000,0.9000,parsed 7 of 10
+tinyllama,by_gold,ABSTAIN,10,0.0000,0.9000,parsed 2 (both committed)
+tinyllama,by_gold,ESCALATE,20,0.0000,0.9000,parsed 10 (all committed)
+
+# mean_confidence over parsed responses in the cell; parse errors excluded from confidence but included in by_gold accuracy denominators? No:
+# by_gold accuracy uses all tasks in that gold class (parse error = incorrect); mean_confidence uses parsed responses only.
